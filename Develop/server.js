@@ -4,7 +4,6 @@ const fs = require('fs');
 const {v4:uuidv4} = require('uuid');
 let db = require('./db/db.json')
 
-// console.log(uuidv4())
 const PORT = 3001;
 
 const app = express();
@@ -22,10 +21,6 @@ app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-app.listen(PORT, () =>
-  console.log(`App listening at http://localhost:${PORT} 🚀`)
-);
-
 app.get('/api/notes', (req, res) => {
   try {
     res.json(db)
@@ -36,15 +31,28 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.post('/api/notes', (req, res) => {
-  // console.log(req.body)
   req.body.id = uuidv4();
-  // console.log(req.body)
   db.push(req.body)
-  console.log(db)
   fs.writeFile('./db/db.json', JSON.stringify(db), (err) => {
     if (err) {
       throw err
     }
-    console.log('The file has been saved.')
+    console.log('The note has been saved.')
   })
 })
+
+app.delete('/api/notes/:id', (req, res) =>{
+  const { id } = req.params;
+  const deletedNote = db.find(note => note.id === id) 
+  db = db.filter(note => note.id != id)
+  fs.writeFile('./db/db.json', JSON.stringify(db), (err) => {
+    if (err) {
+      throw err
+    }
+    console.log('The note has been deleted.')
+  })
+})
+
+app.listen(PORT, () =>
+  console.log(`App listening at http://localhost:${PORT} 🚀`)
+);
