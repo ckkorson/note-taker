@@ -38,6 +38,7 @@ app.post('/api/notes', (req, res) => {
       throw err
     }
     console.log('The note has been saved.')
+    res.json(db)
   })
 })
 
@@ -50,6 +51,7 @@ app.delete('/api/notes/:id', (req, res) =>{
       throw err
     }
     console.log('The note has been deleted.')
+    res.json(db)
   })
 })
 
